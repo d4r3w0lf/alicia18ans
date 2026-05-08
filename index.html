@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+  :root {
+    --black: #050508;
+    --dark: #0d0d14;
+    --card-bg: #111118;
+    --neon: #b5f23d;
+    --neon-dim: rgba(181, 242, 61, 0.15);
+    --neon-glow: rgba(181, 242, 61, 0.4);
+    --white: #f0f0f0;
+    --muted: #888899;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE */
+  .noise {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 60px 48px;
+    gap: 48px;
+  }
+
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; padding: 40px 24px; text-align: center; }
+    .hero-poster { order: -1; max-width: 200px; margin: 0 auto; }
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(181,242,61,0.1) 0%, transparent 70%);
+    top: 50%; right: 10%;
+    transform: translateY(-50%);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: translateY(-50%) scale(1); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.15); }
+  }
+
+  .hero-left {
+    position: relative; z-index: 1;
+    animation: fadeUp 0.9s ease both;
+  }
+
+  .age-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--neon);
+    color: var(--neon);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    box-shadow: 0 0 20px var(--neon-dim);
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 100px);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -2px;
+  }
+
+  .hero-name span {
+    display: block;
+    color: var(--neon);
+    text-shadow: 0 0 40px var(--neon-glow), 0 0 80px rgba(181,242,61,0.2);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    font-weight: 300;
+  }
+
+  .scroll-hint {
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: linear-gradient(to right, var(--neon), transparent);
+    animation: expand 2s ease-in-out infinite;
+  }
+
+  @keyframes expand {
+    0%, 100% { width: 40px; opacity: 1; }
+    50% { width: 60px; opacity: 0.5; }
+  }
+
+  /* POSTER */
+  .hero-poster {
+    position: relative; z-index: 1;
+    animation: fadeUp 0.9s ease 0.3s both;
+  }
+
+  .poster-wrap {
+    position: relative;
+    display: inline-block;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(181,242,61,0.2), 0 40px 80px rgba(0,0,0,0.6);
+    border: 1px solid rgba(181,242,61,0.2);
+    width: 100%;
+    max-width: 310px;
+  }
+
+  .poster-wrap img {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .poster-wrap:hover img {
+    transform: scale(1.03);
+  }
+
+  .poster-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(5,5,8,0.95) 0%, transparent 60%);
+    padding: 24px 20px 20px;
+  }
+
+  .poster-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--neon);
+    margin-bottom: 4px;
+  }
+
+  .poster-date {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .poster-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: transparent;
+    box-shadow: 0 0 30px rgba(181,242,61,0.15);
+    pointer-events: none;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(181,242,61,0.15); }
+    50% { box-shadow: 0 0 60px rgba(181,242,61,0.3); }
+  }
+
+  /* SECTIONS */
+  section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    position: relative; z-index: 1;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--neon);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--neon-dim), transparent);
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(181,242,61,0.2), transparent);
+  }
+
+  /* MESSAGE */
+  .message-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(181,242,61,0.15);
+    border-radius: 16px;
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .message-card::before {
+    content: '❝';
+    position: absolute;
+    top: 16px; left: 24px;
+    font-size: 80px;
+    color: var(--neon);
+    opacity: 0.12;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  .message-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(17px, 2.5vw, 22px);
+    font-style: italic;
+    line-height: 1.8;
+    color: var(--white);
+  }
+
+  .message-sig {
+    margin-top: 28px;
+    font-size: 14px;
+    color: var(--neon);
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+
+  /* GIFTS */
+  .gifts-grid { display: grid; gap: 20px; }
+
+  .gift-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    align-items: start;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gift-card:hover {
+    border-color: rgba(181,242,61,0.35);
+    transform: translateY(-3px);
+  }
+
+  .gift-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(181,242,61,0.04), transparent 60%);
+    pointer-events: none;
+  }
+
+  .gift-icon {
+    width: 64px; height: 64px;
+    border-radius: 12px;
+    background: var(--neon-dim);
+    border: 1px solid rgba(181,242,61,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .gift-number {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--neon);
+    margin-bottom: 6px;
+  }
+
+  .gift-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .gift-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .gift-desc strong { color: var(--white); }
+
+  .tag {
+    display: inline-block;
+    background: var(--neon-dim);
+    border: 1px solid rgba(181,242,61,0.25);
+    color: var(--neon);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-top: 12px;
+  }
+
+  .subway-logo {
+    display: inline-flex;
+    align-items: center;
+    background: #009743;
+    color: #fff;
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: -0.5px;
+    padding: 5px 13px;
+    border-radius: 6px;
+    margin-top: 12px;
+  }
+
+  .subway-logo span { color: #f5c400; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative; z-index: 1;
+    border-top: 1px solid rgba(181,242,61,0.08);
+  }
+
+  .footer-heart {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 20px;
+    animation: heartbeat 2s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .footer-sig {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 4vw, 28px);
+    font-style: italic;
+    color: var(--white);
+  }
+
+  .footer-sub {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .neon-line {
+    width: 60px; height: 2px;
+    background: var(--neon);
+    margin: 24px auto 0;
+    box-shadow: 0 0 12px var(--neon-glow);
+    border-radius: 2px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="age-badge">✦ 18 ans ✦</div>
+    <h1 class="hero-name">
+      Joyeux<br>
+      <span>Anniversaire</span>
+      Alicia
+    </h1>
+    <p class="hero-sub">Aujourd'hui, tout commence</p>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      Découvre tes cadeaux
+    </div>
+  </div>
+
+  <div class="hero-poster">
+    <div class="poster-wrap">
+      <img src="https://fr.web.img2.acsta.net/c_310_420/img/94/dd/94dd424165cc7a238b2c2cc7d1c348de.jpg" alt="Billie Eilish - Hit Me Hard and Soft Tour" />
+      <div class="poster-overlay">
+        <div class="poster-label">🎬 CGR Blagnac</div>
+        <div class="poster-date">7 Mai 2026 · 3 places</div>
+      </div>
+      <div class="poster-glow"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGE -->
+<section>
+  <div class="section-label reveal">Un mot de Papa</div>
+  <div class="message-card reveal reveal-delay-1">
+    <p class="message-text">
+      "18 ans, c'est un nouveau départ — et quel départ ! Quoi qu'il arrive, quoi que la vie traverse, tu peux compter sur moi. Je suis là, fier de toi, et profondément confiant en tes capacités de construire ton avenir. Le meilleur reste à écrire, ma puce."
+    </p>
+    <p class="message-sig">Je t'aime. 🖤 — Papa</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CADEAUX -->
+<section>
+  <div class="section-label reveal">Tes cadeaux</div>
+
+  <div class="gifts-grid">
+
+    <div class="gift-card reveal reveal-delay-1">
+      <div class="gift-icon">🎬</div>
+      <div>
+        <div class="gift-number">Cadeau 01</div>
+        <div class="gift-title">Billie Eilish au cinéma</div>
+        <div class="gift-desc">
+          <strong>3 places</strong> pour voir le <strong>Hit Me Hard and Soft Tour</strong> au cinéma CGR de Blagnac, le <strong>7 mai</strong>. Une place pour toi, une pour inviter une amie — parce que les meilleurs moments se partagent.
+        </div>
+        <span class="tag">Expérience ✦</span>
+      </div>
+    </div>
+
+    <div class="gift-card reveal reveal-delay-2">
+      <div class="gift-icon">🥪</div>
+      <div>
+        <div class="gift-number">Cadeau 02</div>
+        <div class="gift-title">Repas Subway</div>
+        <div class="gift-desc">
+          Juste avant le film — un bon repas pour bien démarrer la soirée.
+        </div>
+        <div class="subway-logo">SUB<span>WAY</span>®</div>
+      </div>
+    </div>
+
+    <div class="gift-card reveal reveal-delay-3">
+      <div class="gift-icon">💸</div>
+      <div>
+        <div class="gift-number">Cadeau 03</div>
+        <div class="gift-title">Budget piercing & plaisir</div>
+        <div class="gift-desc">
+          Un virement bancaire sur ton compte — pour un piercing, ou tout autre chose qui te fait envie. Ce cadeau, <strong>c'est toi qui décides</strong>.
+        </div>
+        <span class="tag">Virement bancaire ✦</span>
+      </div>
+    </div>
+
+    <div class="gift-card reveal reveal-delay-4">
+      <div class="gift-icon">🎮</div>
+      <div>
+        <div class="gift-number">Cadeau 04</div>
+        <div class="gift-title">Tomodachi Life</div>
+        <div class="gift-desc">
+          Le jeu <strong>Tomodachi Life</strong> — pour créer ton île, tes personnages, ton univers à toi.
+        </div>
+        <span class="tag">Jeu vidéo ✦</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-heart">🖤</span>
+  <div class="footer-sig">Avec tout mon amour, Papa</div>
+  <div class="footer-sub">Pour tes 18 ans — Mai 2026</div>
+  <div class="neon-line"></div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
